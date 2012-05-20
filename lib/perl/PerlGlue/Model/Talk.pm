@@ -42,7 +42,7 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
     return wantarray ? (0, "Can't rate until after the talk") : 0 unless($self->talkEnded);
     return wantarray ? (0, "That's just not nice") : 0 if( $rating < 1 );
     # first check that this user hasn't rated this talk before.
-    my $sql = qq{select * from ratings where talk_id = ? and user_id = ?);
+    my $sql = qq{select * from ratings where talk_id = ? and user_id = ?};
     my $sth = $self->dbh->runSqlCommand( $sql, [$self->id, $userId] );
     if( my $row = $sth->fetchrow_hashref ) {
       return wantarray ? (0, "You have already rated this talk") : 0;
