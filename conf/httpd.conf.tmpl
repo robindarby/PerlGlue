@@ -1,0 +1,98 @@
+
+ServerAdmin @@run.Admin@@
+
+Listen @@run.WWWPort@@
+NameVirtualHost *:@@run.WWWPort@@
+
+TypesConfig @@run.Base@@/conf/mime.types
+
+ServerRoot @@run.Base@@
+
+User @@run.user@@
+Group @@run.group@@
+HostnameLookups off
+
+Options -Indexes +FollowSymLinks +ExecCGI
+
+MaxRequestsPerChild 3000
+MaxClients 40
+KeepAlive 5
+KeepAliveTimeout 60
+IdentityCheck Off
+
+#
+# The following directives define some format nicknames for use with
+# a CustomLog directive (see below).
+#
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %P %l %u %t \"%r\" %>s %b" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent
+LogLevel @@run.LogLevel@@
+TransferLog @@run.LogPath@@/access_log
+ErrorLog @@run.LogPath@@/error_log
+
+
+PidFile @@run.LogPath@@/httpd.pid
+LockFile @@run.LogPath@@/httpd.lock
+ScoreBoardFile @@run.LogPath@@/httpd.scoreboard
+
+<IfDefine NYTPROF>
+    PerlSetEnv NYTPROF addpid=0:trace=2:start=init:file=@@run.LogPath@@/nytprof.out
+    MaxClients 1
+    PerlModule Devel::NYTProf::Apache
+</IfDefine>
+
+<VirtualHost *:@@run.WWWPort@@>
+  ServerName  @@run.ServerName@@
+
+  PerlSendHeader on
+
+  PerlRequire @@run.Base@@/lib/startup.pl
+
+  PerlSetVar MasonCompRoot "main    => @@run.Base@@/mason"
+  PerlAddVar MasonCompRoot "common  => @@run.Base@@/mason/common"
+  PerlAddVar MasonCompRoot "example => @@run.Base@@/mason/example"
+  PerlAddVar MasonDynamicCompRoot 1
+  PerlSetVar MasonDataDir  @@run.Base@@/cache
+  PerlSetVar MasonDeclineDirs 0
+  PerlSetVar MasonErrorMode fatal
+  PerlSetVar MasonStaticSource @@run.StaticMode@@
+  PerlSetVar MasonStaticSourceTouchFile @@run.LogPath@@/httpd.pid
+
+  SetEnv SITE_BASE @@run.Base@@
+  
+  Alias /images/ @@run.Base@@/images/
+  Alias /js/     @@run.Base@@/js/
+  Alias /css/    @@run.Base@@/css/
+
+  DocumentRoot @@run.Base@@/mason/
+  DirectoryIndex index.mhtml
+
+
+  <LocationMatch "\.(mas|handler)$">
+    SetHandler perl-script
+    PerlInitHandler Apache::Constants::NOT_FOUND
+  </LocationMatch>
+
+  <Location />
+    SetHandler perl-script
+    PerlHandler HTML::Mason::ApacheHandler
+    allow from all
+  </Location>
+
+  <Location /css/>
+    SetHandler default-handler
+  </Location>
+
+  <Location /images/>
+    SetHandler default-handler
+  </Location>
+
+  <Location /cgi-bin/>
+    SetHandler cgi-script
+  </Location>
+
+</VirtualHost>
+
+
