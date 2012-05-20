@@ -20,10 +20,6 @@ KeepAlive 5
 KeepAliveTimeout 60
 IdentityCheck Off
 
-#
-# The following directives define some format nicknames for use with
-# a CustomLog directive (see below).
-#
 LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
 LogFormat "%h %P %l %u %t \"%r\" %>s %b" common
 LogFormat "%{Referer}i -> %U" referer
@@ -32,54 +28,22 @@ LogLevel @@run.LogLevel@@
 TransferLog @@run.LogPath@@/access_log
 ErrorLog @@run.LogPath@@/error_log
 
-
 PidFile @@run.LogPath@@/httpd.pid
 LockFile @@run.LogPath@@/httpd.lock
-ScoreBoardFile @@run.LogPath@@/httpd.scoreboard
-
-<IfDefine NYTPROF>
-    PerlSetEnv NYTPROF addpid=0:trace=2:start=init:file=@@run.LogPath@@/nytprof.out
-    MaxClients 1
-    PerlModule Devel::NYTProf::Apache
-</IfDefine>
 
 <VirtualHost *:@@run.WWWPort@@>
   ServerName  @@run.ServerName@@
 
   PerlSendHeader on
 
-  PerlRequire @@run.Base@@/lib/startup.pl
+  PerlRequire @@run.Base@@/lib/preload.pl
 
-  PerlSetVar MasonCompRoot "main    => @@run.Base@@/mason"
-  PerlAddVar MasonCompRoot "common  => @@run.Base@@/mason/common"
-  PerlAddVar MasonCompRoot "example => @@run.Base@@/mason/example"
-  PerlAddVar MasonDynamicCompRoot 1
-  PerlSetVar MasonDataDir  @@run.Base@@/cache
-  PerlSetVar MasonDeclineDirs 0
-  PerlSetVar MasonErrorMode fatal
-  PerlSetVar MasonStaticSource @@run.StaticMode@@
-  PerlSetVar MasonStaticSourceTouchFile @@run.LogPath@@/httpd.pid
-
-  SetEnv SITE_BASE @@run.Base@@
-  
   Alias /images/ @@run.Base@@/images/
   Alias /js/     @@run.Base@@/js/
   Alias /css/    @@run.Base@@/css/
 
-  DocumentRoot @@run.Base@@/mason/
-  DirectoryIndex index.mhtml
-
-
-  <LocationMatch "\.(mas|handler)$">
-    SetHandler perl-script
-    PerlInitHandler Apache::Constants::NOT_FOUND
-  </LocationMatch>
-
-  <Location />
-    SetHandler perl-script
-    PerlHandler HTML::Mason::ApacheHandler
-    allow from all
-  </Location>
+  DocumentRoot @@run.Base@@/htdocs/
+  DirectoryIndex index.html
 
   <Location /css/>
     SetHandler default-handler
@@ -89,8 +53,62 @@ ScoreBoardFile @@run.LogPath@@/httpd.scoreboard
     SetHandler default-handler
   </Location>
 
-  <Location /cgi-bin/>
-    SetHandler cgi-script
+  <Location /js/>
+    SetHandler default-handler
+  </Location>
+
+  <Location /talks/schedule/>
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Schedule
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/\d+/info/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/\d+/add/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/\d+/remove/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/myschedule/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Schedule
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/\d+/comment/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/\d+/rate/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </Location>
+
+  <LocationMatch "/alerts/enable/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Settings
+    allow from all
+  </Location>
+
+  <LocationMatch "/alerts/disable/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Settings
+    allow from all
   </Location>
 
 </VirtualHost>

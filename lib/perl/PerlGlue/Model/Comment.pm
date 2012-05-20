@@ -17,4 +17,11 @@ class PerlGlue::Model::Comment {
 
     $self->row( undef );
   }
+
+  method toHash {
+    return {
+      date => $self->date->ago,
+      body => $self->body
+    };
+  }
 }

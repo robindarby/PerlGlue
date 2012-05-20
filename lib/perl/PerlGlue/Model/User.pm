@@ -1,6 +1,8 @@
 use MooseX::Declare;
 
 class PerlGlue::Model::User extends PerlGlue::Model::Base {
+
+  use PerlGlue::Model::Talk;
   
   has id          => ( is => 'rw', isa => 'Int' );
   has deviceType  => ( is => 'rw', isa => 'Str', required => 1 );
@@ -34,6 +36,18 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
     my $sql = qq( insert into user_schedule (user_id, talk_id) values(?,?)};
     $self->dbh->query( $sql, [ $self->id, $talkId ] );
     return 1;
+  }
+
+  method commentOnTalk( Int :$talkId, Str :$message ) {
+    my $talk = new PerlGlue::model::Talk( id => $talkId );
+    my ($status, $msg) = $talk->comment( userId => $self->id, message => $message );
+    return ($status, $msg);
+  }
+
+  method rateTalk( ( Int :$talkId, Int :$rating ) {
+    my $talk = new PerlGlue::model::Talk( id => $talkId );
+    my ($status, $msg) = $talk->rate( userId => $self->id, rating => $rating );
+    return ($status, $msg);
   }
 
   method removeTalk( Int $talkId! ) {

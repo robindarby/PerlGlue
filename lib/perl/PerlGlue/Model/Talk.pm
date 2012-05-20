@@ -15,32 +15,32 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
   has row           => ( is => 'rw', isa => 'HashRef' );
 
   method BUILD {
-    return unless($self->row);
-
-    $self->id( $row->id );
-    $self->scheduledDate( new PerlGlue::Model::DateTime( epoch => $row->{date} ) );
-    $self->duration( $row->{duration} );
-
-    # has the talk ended (i.e. duration minutes after start).
-    $self->talkEnded( (($self->scheduledDate->epoch + ($self->duration * 60)) < time );
-    $self->location( $row->{location} );
-    $self->title( $row->{title} );
-    $self->overview( $row->{overview} );
-    $self->rating( $row->{rating} );
-    $self->author( new PerlGlue::Model::Author( id => $row->{author_id}, name => $row->{author_name} ) ); 
-
-    $self->row( undef );
+    # build via db row (hash).
+    if($self->row) {
+      $self->_buildFromRow( $self->row );
+      $self->row( undef );
+    }
+    # retrieve via talk id.
+    elsif( $self->id ) {
+      my $sql = qq{select * from talks where id = ?};
+      my $sth = $self->dbh->runSqlCommand( $sql, [$self->id] );
+      if( my $row = $sth->fetchrow_hashref ) {
+        $self->_buildFromRow( $row );
+      }
+      $sth->finish;
+    }
   }
 
   method comment( Str :$message, Int :$userId ) {
     my $sql = qq{ insert into comments(talk_id, message, user_id) values(?,?,?) };
     $self->dbh->query( $sql, [ $self->id, $message, $userId ] );
-    return wantarray ? (1, "Comment saved") : 1;
+    return wantarray ? (1, "Comment saved, but needs approval") : 1;
   }
 
   method rate( Int :$rating, Int :$userId ) {
     # can't rate until the talk is over.
     return wantarray ? (0, "Can't rate until after the talk") : 0 unless($self->talkEnded);
+    return wantarray ? (0, "That's just not nice") : 0 if( $rating < 1 );
     # first check that this user hasn't rated this talk before.
     my $sql = qq{select * from ratings where talk_id = ? and user_id = ?);
     my $sth = $self->dbh->runSqlCommand( $sql, [$self->id, $userId] );
@@ -54,8 +54,8 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
     return wantarray ? (1, "Rating saved") : 1;
   }
 
-  method getComments( Int :$offset, Int :$limit ) {
-    my $sql = qq{select SQL_CALC_FOUND_ROWS * from comments where talk_id = ? and approved = 1};
+  method getComments( Int :$offset!, Int :$limit! ) {
+    my $sql = qq{select SQL_CALC_FOUND_ROWS * from comments where talk_id = ? and approved = 1 order by date};
     my $sth = $self->dbh->runSqlCommand( $sql, [$self->id] );
     my $totalRows = $self->dbh->getTotalRows;
     my $comments = [];
@@ -66,7 +66,12 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
     return wantarray ? ($comments, $totalRows) : $comments;
   }
 
-  method toHash {
+  method toHash( Int :$offset = 0, Int :$limit = 5 ) { {
+    my $comments = $self->getComments( offset => $offset, limit => $limit );
+    my $commentHashList = [];
+    foreach my $comment (@$comments) {
+      push @$commentHashList, $comment->toHash;
+    }
     return  {
       date     => $self->scheduledDate->long,
       duration => $self->duration,
@@ -74,8 +79,22 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
       title    => $self->title,
       overview => $self->overview,
       rating   => ($self->talkEnded) ? $self->rating : 'N/A',
-      author   => $self->author->name
+      author   => $self->author->name,
+      comments => $commentHashList,
     }
+  }
+
+  method _buildFromRow( $row! ) {
+    $self->id( $row->id );
+    $self->scheduledDate( new PerlGlue::Model::DateTime( epoch => $row->{date} ) );
+    $self->duration( $row->{duration} );
+    # has the talk ended (i.e. duration minutes after start).
+    $self->talkEnded( (($self->scheduledDate->epoch + ($self->duration * 60)) < time );
+    $self->location( $row->{location} );
+    $self->title( $row->{title} );
+    $self->overview( $row->{overview} );
+    $self->rating( $row->{rating} );
+    $self->author( new PerlGlue::Model::Author( id => $row->{author_id}, name => $row->{author_name} ) )
   }
 
 }
