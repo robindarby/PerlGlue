@@ -1,6 +1,6 @@
 
 darby.darby-laptop.run.ApacheBIN=/usr/local/apache/bin/httpd
-darby.darby-laptop.run.Base=/home/darby/work/perlglue
+darby.darby-laptop.run.Base=/home/darby/work/PerlGlue
 darby.darby-laptop.run.ServerName=localhost
 darby.darby-laptop.run.user=darby
 darby.darby-laptop.run.group=darby

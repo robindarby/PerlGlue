@@ -21,10 +21,12 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
     $sth->finish;
     # no ID? create a new user.
     unless( $self->id ) {
-      $sql = qq{insert into users (device_id, device_type} values(?,?)};
+      $sql = qq{insert into users (device_id, device_type) values(?,?)};
       my $id = $self->dbh->query( $sql, [ $self->deviceId, $self->deviceType ] );
     }
   }
+
+
 
   method getSchedule( Int $epochDay ) {
     my $day = new PerlGlue::Model::DateTime( epoch => $epochDay );
@@ -33,7 +35,7 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
   }
 
   method addTalk( Int $talkId! ) {
-    my $sql = qq( insert into user_schedule (user_id, talk_id) values(?,?)};
+    my $sql = qq{ insert into user_schedule (user_id, talk_id) values(?,?)};
     $self->dbh->query( $sql, [ $self->id, $talkId ] );
     return 1;
   }
@@ -44,17 +46,22 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
     return ($status, $msg);
   }
 
-  method rateTalk( ( Int :$talkId, Int :$rating ) {
+  method rateTalk( Int :$talkId, Int :$rating ) {
     my $talk = new PerlGlue::model::Talk( id => $talkId );
     my ($status, $msg) = $talk->rate( userId => $self->id, rating => $rating );
     return ($status, $msg);
   }
+
+}
+
+__END__
 
   method removeTalk( Int $talkId! ) {
     my $sql = qq{delete from user_schedule where user_id = ? and talk_id = ?};
     $self->dbh->query( $sql, [$self->id, $talkId] );
     return 1;
   }
+
 
   method enableAlerts( Str $token ) {
     my $sql = qq{update users set device_token = ?, alerts_enabled = ? where id = ?};

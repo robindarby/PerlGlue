@@ -13,13 +13,13 @@ use MooseX::Declare;
 #######################################################################################
 
 
-class OnTheSkiInfo::Model::Base {
+class PerlGlue::Model::Base {
 
   use MooseX::ClassAttribute;
   use PerlGlue::Database;
 
-  has language => ( is => 'ro', isa => 'Str', required => 1 );
-  has region   => ( is => 'ro', isa => 'Str', required => 1 );
+  has language => ( is => 'ro', isa => 'Str', default => 'en' );
+  has region   => ( is => 'ro', isa => 'Str', default => 'US' );
 
   has dbh      => ( is => 'rw', isa => 'PerlGlue::Database');
 

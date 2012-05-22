@@ -13,10 +13,17 @@ class PerlGlue::Model::Schedule extends PerlGlue::Model::Base {
       push @$talks, new PerlGlue::Model::Talk( row => $row );
     }
     $sth->finish;
-    return wantarray ? ($talks, $totalRows) : $talks;
+    return (wantarray) ? ($talks, $totalRows) : $talks;
   }
 
   method _retrieveTalksQuery( Int :$offset!, Int :$limit! ) {
-    return qq{ select SQL_CALC_FOUND_ROWS * from talks where day = ? order by date limit $offset, $limit};
+    return qq{ 
+      select SQL_CALC_FOUND_ROWS t.*, a.name as author_name
+      from talks t
+      left join authors a on t.author_id = a.id
+      where t.day = ? 
+      order by t.date 
+      limit $offset, $limit
+    };
   }
 }

@@ -1,4 +1,4 @@
-package PerlGlue::Handler::Schedule;
+package PerlGlue::Handler::Settings;
   use Apache::Constants qw(OK);
   use strict;
   use PerlGlue::Service::Schedule;

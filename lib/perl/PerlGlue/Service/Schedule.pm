@@ -32,13 +32,15 @@ class PerlGlue::Service::Schedule {
   }
 
   method getTalkInfo( Int :$talkId, Int :$page = 0 ) {
-    my $talk = new PerlGlue::Model::Talk( id => $talkId );
+    my $talk = eval { new PerlGlue::Model::Talk( id => $talkId ) };
+    return undef unless( $talk );
+
     my $offset = $page * $COMMENTS_PER_PAGE;
 
-    return encode_json( $talk->toHash( offset => $offset, limit => $COMMENTS_PER_PAGE );
+    return encode_json( $talk->toHash( offset => $offset, limit => $COMMENTS_PER_PAGE ) );
   }
 
-  method getUserSchedule( Str :$deviceId!, Str :$deviceType!, int :$epochDay, Int :$page = 0 ) {
+  method getUserSchedule( Str :$deviceId!, Str :$deviceType!, Int :$epochDay, Int :$page = 0 ) {
     my $user = new PerlGlue::Model::User( deviceId => $deviceId, deviceType => $deviceType );
 
     my $offset = $page * $TALKS_PER_PAGE;

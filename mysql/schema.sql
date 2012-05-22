@@ -3,6 +3,7 @@ drop table if exists talks;
 create table talks (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
   date int(10) unsigned NOT NULL,
+  day int(10) unsigned NOT NULL,
   duration int(2) unsigned NOT NULL,
   location varchar(255) NOT NULL default '',
   title varchar(255) NOT NULL,

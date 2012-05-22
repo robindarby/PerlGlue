@@ -31,6 +31,10 @@ ErrorLog @@run.LogPath@@/error_log
 PidFile @@run.LogPath@@/httpd.pid
 LockFile @@run.LogPath@@/httpd.lock
 
+SetEnv DB_CONN_STR @@run.DBConnectionString@@
+SetEnv DB_USER @@run.DBUser@@
+SetEnv DB_PASS @@run.DBPass@@
+
 <VirtualHost *:@@run.WWWPort@@>
   ServerName  @@run.ServerName@@
 
@@ -63,49 +67,49 @@ LockFile @@run.LogPath@@/httpd.lock
     allow from all
   </Location>
 
-  <LocationMatch "/talks/\d+/info/">
+  <LocationMatch "/talks/[0-9]+/info/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Talk
     allow from all
-  </Location>
+  </LocationMatch>
 
-  <LocationMatch "/talks/\d+/add/">
+  <LocationMatch "/talks/[0-9]+/add/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Talk
     allow from all
-  </Location>
+  </LocationMatch>
 
-  <LocationMatch "/talks/\d+/remove/">
+  <LocationMatch "/talks/[0-9]+/remove/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Talk
     allow from all
-  </Location>
+  </LocationMatch>
 
-  <LocationMatch "/talks/myschedule/">
+  <Location "/talks/myschedule/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Schedule
     allow from all
   </Location>
 
-  <LocationMatch "/talks/\d+/comment/">
+  <LocationMatch "/talks/[0-9]+/comment/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Talk
     allow from all
-  </Location>
+  </LocationMatch>
 
-  <LocationMatch "/talks/\d+/rate/">
+  <LocationMatch "/talks/[0-9]+/rate/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Talk
     allow from all
-  </Location>
+  </LocationMatch>
 
-  <LocationMatch "/alerts/enable/">
+  <Location "/alerts/enable/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Settings
     allow from all
   </Location>
 
-  <LocationMatch "/alerts/disable/">
+  <Location "/alerts/disable/">
     SetHandler perl-script
     PerlHandler PerlGlue::Handler::Settings
     allow from all
