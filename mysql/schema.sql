@@ -4,10 +4,10 @@ create table talks (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
   date int(10) unsigned NOT NULL,
   duration int(2) unsigned NOT NULL,
-  location varchar(255) NOT NULL,
+  location varchar(255) NOT NULL default '',
   title varchar(255) NOT NULL,
   overview varchar(255) NOT NULL,
-  author_id int(10) unsigned NOT NULL,
+  author_id int(10) unsigned,
   rating  int(2) unsigned NOT NULL default 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -26,6 +26,7 @@ create table comments (
   user_id int(10) unsigned NOT NULL,
   date int(10) unsigned NOT NULL,
   body varchar(255) NOT NULL,
+  approved int(1) unsigned NOT NULL default 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
