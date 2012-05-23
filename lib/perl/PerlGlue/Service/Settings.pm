@@ -6,10 +6,10 @@ class PerlGlue::Service::Settings {
 
   use PerlGlue::Model::User;
 
-  method enableAlerts( Str :$deviceId!, Str :$deviceType!, Str deviceToken ) {
+  method enableAlerts( Str :$deviceId!, Str :$deviceType!, Str :$deviceToken! ) {
 
     my $user = new PerlGlue::Model::User( deviceId => $deviceId, deviceType => $deviceType );
-    my $status = $user->enableAlerts( token => $deviceToken );
+    my $status = $user->enableAlerts( $deviceToken );
     my $json = {
       status => $status,
       message => "Alerts enabled"
@@ -18,7 +18,7 @@ class PerlGlue::Service::Settings {
     return encode_json( $json );
   }
 
-  method removeTalkFromUserSchedule( Str :$deviceId!, Str :$deviceType! ) {
+  method disableAlerts( Str :$deviceId!, Str :$deviceType!, Str :$deviceToken! ) {
 
     my $user = new PerlGlue::Model::User( deviceId => $deviceId, deviceType => $deviceType );
     my $status = $user->disableAlerts();

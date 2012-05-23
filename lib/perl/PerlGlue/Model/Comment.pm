@@ -8,7 +8,7 @@ class PerlGlue::Model::Comment {
   has date  => ( is => 'rw', isa => 'PerlGlue::Model::DateTime' );
   has body  => ( is => 'rw', isa => 'Str' );
 
-  has row   => ( is => 'rw', isa => 'HashRef' );
+  has row   => ( is => 'rw', isa => 'Maybe[HashRef]' );
 
   method BUILD {
     return unless $self->row;

@@ -61,14 +61,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   #   string is in i18n tag format for display.
   #
   method ago {
-    my $dateStr = ago(time() - $self->epoch, 1);
-    $dateStr =~ s/year(s)? ago/\[! years_ago\]/gi;
-    $dateStr =~ s/month(s)? ago/\[! months_ago\]/gi;
-    $dateStr =~ s/week(s)? ago/\[! weeks_ago\]/gi;
-    $dateStr =~ s/day(s)? ago/\[! days_ago\]/gi;
-    $dateStr =~ s/hour(s)? ago/\[! hours_ago\]/gi;
-    $dateStr =~ s/minute(s)? ago/\[! minutes_ago\]/gi;
-    return $dateStr;
+    return ago(time() - $self->epoch, 1);
   }
 
   #

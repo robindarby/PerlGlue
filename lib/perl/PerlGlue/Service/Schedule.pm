@@ -13,8 +13,8 @@ class PerlGlue::Service::Schedule {
   Readonly my $COMMENTS_PER_PAGE => 5;
   Readonly my $TALKS_PER_PAGE    => 100;
 
-  method getSchedule( Int :$epochDay, Int :$page = 0 ) {
-    my $day = new PerlGlue::Model::DateTime( epoch => $epochDay );
+  method getSchedule( Int :$epoch, Int :$page = 0 ) {
+    my $day = new PerlGlue::Model::DateTime( epoch => $epoch );
     my $schedule = new PerlGlue::Model::Schedule( day => $day );
     
     my $offset = $page * $TALKS_PER_PAGE;
@@ -25,7 +25,7 @@ class PerlGlue::Service::Schedule {
     };
 
     foreach my $talk (@$talks) {
-      push @{$json->results}, $talk->toHash;
+      push @{$json->{results}}, $talk->toHash( limit => 0 );
     }
 
     return encode_json( $json );
@@ -40,18 +40,18 @@ class PerlGlue::Service::Schedule {
     return encode_json( $talk->toHash( offset => $offset, limit => $COMMENTS_PER_PAGE ) );
   }
 
-  method getUserSchedule( Str :$deviceId!, Str :$deviceType!, Int :$epochDay, Int :$page = 0 ) {
+  method getUserSchedule( Str :$deviceId!, Str :$deviceType!, Int :$epoch, Int :$page = 0 ) {
     my $user = new PerlGlue::Model::User( deviceId => $deviceId, deviceType => $deviceType );
 
     my $offset = $page * $TALKS_PER_PAGE;
-    my ($talks, $totalTalks) = $user->getSchedule( $epochDay )->getTalks( offset => $offset, limit => $TALKS_PER_PAGE );
+    my ($talks, $totalTalks) = $user->getSchedule( $epoch )->getTalks( offset => $offset, limit => $TALKS_PER_PAGE );
     my $json = {
       total => $totalTalks,
       results => []
     };
 
     foreach my $talk (@$talks) {
-      push @{$json->results}, $talk->toHash;
+      push @{$json->{results}}, $talk->toHash( limit => 0 );
     }
 
     return encode_json( $json );
@@ -81,13 +81,13 @@ class PerlGlue::Service::Schedule {
     return encode_json( $json );
   }
 
-  method rateTalk( Str :$deviceId!, Str :$deviceType!, Int :$talkId!, Int :$rating ) {
+  method rateTalk( Str :$deviceId!, Str :$deviceType!, Int :$talkId!, Int :$rating! ) {
 
     my $user = new PerlGlue::Model::User( deviceId => $deviceId, deviceType => $deviceType );
-    my $status = $user->rateTalk( talkId => $talkId, rating => $rating );
+    my ($status, $msg) = $user->rateTalk( talkId => $talkId, rating => $rating );
     my $json = {
       status => $status,
-      message => "Rating added to talk"
+      message => $msg
     };
       
     return encode_json( $json );
@@ -96,10 +96,10 @@ class PerlGlue::Service::Schedule {
   method removeTalkFromUserSchedule( Str :$deviceId!, Str :$deviceType!, Int :$talkId! ) {
 
     my $user = new PerlGlue::Model::User( deviceId => $deviceId, deviceType => $deviceType );
-    my $status = $user->removeTalk( $talkId );
+    my ($status, $msg) = $user->removeTalk( $talkId );
     my $json = {
       status => $status,
-      message => "Talk Added to schedule"
+      message => $msg
     };
 
     return encode_json( $json );

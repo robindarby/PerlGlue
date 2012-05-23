@@ -51,3 +51,9 @@ create table users (
   PRIMARY KEY (`id`),
   UNIQUE KEY(`device_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table user_schedule (
+  user_id int(10) unsigned NOT NULL,
+  talk_id int(10) unsigned NOT NULL,
+  UNIQUE KEY(`user_id`,`talk_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

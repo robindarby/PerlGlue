@@ -1,5 +1,7 @@
 package PerlGlue::Handler::Talk;
+
   use Apache::Constants qw(OK NOT_FOUND);
+  use Switch;
   use strict;
   use PerlGlue::Service::Schedule;
 
@@ -7,30 +9,44 @@ package PerlGlue::Handler::Talk;
     my $r        = shift;
     my $arp      = Apache::Request->new($r);
 
-    my $page = ($arp->param('page')) ? $arp->param('page') : 0;
+    # grap any params.
+    my $page       = ($arp->param('page')) ? $arp->param('page') : 0;
+    my $deviceId   = $arp->param('device_id');
+    my $deviceType = $arp->param('device_type');
+    my $message    = $arp->param('message');
+    my $rating     = $arp->param('rating');
 
+    # workout talk ID and action based on path.
     my $path = $r->uri;
-    warn"\npath: $path";
-
     my $talkId;
-    if( $path =~ m|/talks/(\d+)/info/| ) {
+    my $action = "info";
+    if( $path =~ m|/talks/(\d+)/(\w+)/| ) {
       $talkId = $1;
+      $action = $2;
     }
     
+    # bail now if we don't have a talk ID.
     return NOT_FOUND unless( $talkId );
     
+    # process the action.
+    my $content;
     my $service  = new PerlGlue::Service::Schedule();
-    my $talkJson = $service->getTalkInfo( talkId => $talkId, page => $page ) or do {
-      return NOT_FOUND;
-    };
 
-    warn"\ntalkJson: $talkJson";
+    switch($action) {
+      case "info"    { $content = $service->getTalkInfo( talkId => $talkId, page => $page ) or do { return NOT_FOUND; }; }
+      case "add"     { $content = $service->addTalkToUserSchedule( talkId => $talkId, deviceId => $deviceId, deviceType => $deviceType ) or do { return NOT_FOUND; }; }
+      case "remove"  { $content = $service->removeTalkFromUserSchedule( talkId => $talkId, deviceId => $deviceId, deviceType => $deviceType ) or do { return NOT_FOUND; }; }
+      case "comment" { $content = $service->commentOnTalk( talkId => $talkId, deviceId => $deviceId, deviceType => $deviceType, message => $message ) or do { return NOT_FOUND; }; }
+      case "rate"    { $content = $service->rateTalk( talkId => $talkId, deviceId => $deviceId, deviceType => $deviceType, rating => $rating ) or do { return NOT_FOUND; }; }  
+      else           { return NOT_FOUND; };
+    }
 
+    # spit something back at the client.
     $r->send_http_header('application/x-javascript');
-    #$r->content_type('text/html');
-    print $talkJson;
+    print $content;
     return OK;
   }
+
 
 1;
 

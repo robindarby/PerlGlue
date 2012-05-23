@@ -16,7 +16,7 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
   has author        => ( is => 'rw', isa => 'Maybe[PerlGlue::Model::Author]' );
   has talkEnded     => ( is => 'rw', isa => 'Bool' );
 
-  has row           => ( is => 'rw', isa => 'HashRef' );
+  has row           => ( is => 'rw', isa => 'Maybe[HashRef]' );
 
   method BUILD {
     # build via db row (hash).
@@ -66,7 +66,7 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
   }
 
   method getComments( Int :$offset!, Int :$limit! ) {
-    my $sql = qq{select SQL_CALC_FOUND_ROWS * from comments where talk_id = ? and approved = 1 order by date};
+    my $sql = qq{select SQL_CALC_FOUND_ROWS * from comments where talk_id = ? and approved = 1 order by date limit $offset, $limit};
     my $sth = $self->dbh->runSqlCommand( $sql, [$self->id] );
     my $totalRows = $self->dbh->getTotalRows;
     my $comments = [];

@@ -3,6 +3,7 @@ use MooseX::Declare;
 class PerlGlue::Model::User extends PerlGlue::Model::Base {
 
   use PerlGlue::Model::Talk;
+  use PerlGlue::Model::MySchedule;
   
   has id          => ( is => 'rw', isa => 'Int' );
   has deviceType  => ( is => 'rw', isa => 'Str', required => 1 );
@@ -28,38 +29,34 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
 
 
 
-  method getSchedule( Int $epochDay ) {
-    my $day = new PerlGlue::Model::DateTime( epoch => $epochDay );
+  method getSchedule( Int $epoch ) {
+    my $day = new PerlGlue::Model::DateTime( epoch => $epoch );
     my $schedule = new PerlGlue::Model::MySchedule( day => $day, userId => $self->id );
-    retrun $schedule;
+    return $schedule;
   }
 
   method addTalk( Int $talkId! ) {
     my $sql = qq{ insert into user_schedule (user_id, talk_id) values(?,?)};
     $self->dbh->query( $sql, [ $self->id, $talkId ] );
-    return 1;
+    return (1, "Talk added to your schedule");
   }
 
   method commentOnTalk( Int :$talkId, Str :$message ) {
-    my $talk = new PerlGlue::model::Talk( id => $talkId );
+    my $talk = new PerlGlue::Model::Talk( id => $talkId );
     my ($status, $msg) = $talk->comment( userId => $self->id, message => $message );
     return ($status, $msg);
   }
 
   method rateTalk( Int :$talkId, Int :$rating ) {
-    my $talk = new PerlGlue::model::Talk( id => $talkId );
+    my $talk = new PerlGlue::Model::Talk( id => $talkId );
     my ($status, $msg) = $talk->rate( userId => $self->id, rating => $rating );
     return ($status, $msg);
   }
 
-}
-
-__END__
-
   method removeTalk( Int $talkId! ) {
     my $sql = qq{delete from user_schedule where user_id = ? and talk_id = ?};
     $self->dbh->query( $sql, [$self->id, $talkId] );
-    return 1;
+    return (1, "Talk removed from your schedule");
   }
 
 
@@ -69,7 +66,7 @@ __END__
     return 1;
   }
 
-  method disableAlerts( Str $token ) {
+  method disableAlerts {
     my $sql = qq{update users set alerts_enabled = ? where id = ?};
     $self->dbh->query( $sql, [0, $self->id] );
     return 1;
