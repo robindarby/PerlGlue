@@ -1,13 +1,13 @@
 package PerlGlue::Handler::Schedule;
 
-  use Apache::Constants qw(OK NOT_FOUND);
+  use Apache2::Const qw(OK NOT_FOUND);
   use Switch;
   use strict;
   use PerlGlue::Service::Schedule;
 
   sub handler {
     my $r        = shift;
-    my $arp      = Apache::Request->new($r);
+    my $arp      = Apache2::Request->new($r);
 
     # grap any params.
     my $page       = ($arp->param('page')) ? $arp->param('page') : 0;
@@ -32,7 +32,7 @@ package PerlGlue::Handler::Schedule;
     }
 
     # spit something back at the client.
-    $r->send_http_header('application/x-javascript');
+    $r->content_type('application/x-javascript');
     print $content;
     return OK;
   }
