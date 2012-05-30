@@ -19,6 +19,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   use Time::Duration;
 
   has epoch => ( is => 'rw', isa => 'Int' );
+  has zone  => ( is => 'rw', isa => 'Str', default => 'CDT' );
 
   # class static, map language (ISO) to Date::Language string.
   class_has _dateLangMap => ( is => 'ro', isa => 'HashRef', default => sub {
@@ -49,9 +50,6 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
 
     # setup date format obj.
     $self->_langDate( new Date::Language( $self->_dateLangMap->{ $self->language } ) );
-
-    # set timezone to UTC.
-    $ENV{TZ} = 'UTC';
   }
   
   #
@@ -71,7 +69,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   #
   method short {
     my $template = ($self->region eq 'US') ? "%m/%d/%Y" : "%d/%m/%Y";
-    return $self->_langDate->time2str( $template, $self->epoch );
+    return $self->_langDate->time2str( $template, $self->epoch, $self->zone );
   }
 
   #
@@ -80,7 +78,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   # returns mid sized date format, i.e. "1st Aug"
   #
   method mid {
-    return $self->_langDate->time2str( "%o %b", $self->epoch );
+    return $self->_langDate->time2str( "%o %b", $self->epoch, $self->zone );
   }
 
   #
@@ -89,7 +87,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   # returns long formatted date, i.e. 1st August 2012
   #
   method long {
-    return $self->_langDate->time2str( "%o %B %Y", $self->epoch );
+    return $self->_langDate->time2str( "%o %B %Y", $self->epoch, $self->zone );
   }
   
   #
@@ -98,7 +96,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   # returns time string, i.e. 1:20 pm
   #
   method time {
-    return $self->_langDate->time2str( "%r", $self->epoch );
+    return $self->_langDate->time2str( "%r", $self->epoch, $self->zone );
   }
 
   #
@@ -107,7 +105,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   # returns 24h time string, i.e. 1330h
   #
   method mtime {
-    return $self->_langDate->time2str( "%T", $self->epoch );
+    return $self->_langDate->time2str( "%T", $self->epoch, $self->zone );
   }
 
   #

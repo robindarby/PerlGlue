@@ -22,7 +22,7 @@ class PerlGlue::Model::Schedule extends PerlGlue::Model::Base {
       from talks t
       left join authors a on t.author_id = a.id
       where t.day = ? 
-      order by t.date 
+      order by t.date asc
       limit $offset, $limit
     };
   }

@@ -18,7 +18,7 @@ class PerlGlue::Service::Settings {
     return encode_json( $json );
   }
 
-  method disableAlerts( Str :$deviceId!, Str :$deviceType!, Str :$deviceToken! ) {
+  method disableAlerts( Str :$deviceId!, Str :$deviceType! ) {
 
     my $user = new PerlGlue::Model::User( deviceId => $deviceId, deviceType => $deviceType );
     my $status = $user->disableAlerts();

@@ -85,7 +85,9 @@ class PerlGlue::Model::Talk extends PerlGlue::Model::Base {
     }
     my $author = ( $self->author ) ? $self->author->name : '';
     return  {
+      id       => $self->id,
       date     => $self->scheduledDate->long,
+      time     => $self->scheduledDate->time,
       duration => $self->duration,
       location => $self->location,
       title    => $self->title,

@@ -26,7 +26,7 @@ package PerlGlue::Handler::Settings;
 
     switch($action) {
       case "enable"   { $content = $service->enableAlerts( deviceId => $deviceId, deviceType => $deviceType, deviceToken => $deviceToken ) or do { return NOT_FOUND; }; }
-      case "disable"  { $content = $service->disableAlerts( deviceId => $deviceId, deviceType => $deviceType, deviceToken => $deviceToken ) or do { return NOT_FOUND; }; }
+      case "disable"  { $content = $service->disableAlerts( deviceId => $deviceId, deviceType => $deviceType ) or do { return NOT_FOUND; }; }
       else            { return NOT_FOUND; };
     }
 
