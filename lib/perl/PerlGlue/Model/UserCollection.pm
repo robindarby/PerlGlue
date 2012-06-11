@@ -8,6 +8,8 @@ class PerlGlue::Model::UserCollection extends PerlGlue::Model::Base {
 
   after BUILD {
 
+    return unless( @{$self->talkIds} );
+
     my $talkIn = join(',', @{$self->talkIds} );
    
     my $sql = qq{
