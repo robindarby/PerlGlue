@@ -89,7 +89,7 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
   method _buildAPNS {
 
     my $apnsCert = $ENV{PUSH_CERT};
-    my $apnsKey  = $ENV{PUSK_KEY};
+    my $apnsKey  = $ENV{PUSH_KEY};
 
     my $apns = new PerlGlue::APNS(
       cert        => $apnsCert,
