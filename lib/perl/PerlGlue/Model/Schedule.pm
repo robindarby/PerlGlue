@@ -1,6 +1,7 @@
 use MooseX::Declare;
 
 class PerlGlue::Model::Schedule extends PerlGlue::Model::Base {
+  use PerlGlue::Model::Talk;
 
   has day   => ( is => 'rw', isa => 'PerlGlue::Model::DateTime' );
 

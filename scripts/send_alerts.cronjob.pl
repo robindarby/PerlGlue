@@ -4,7 +4,7 @@ use warnings;
 use lib qw(lib/perl);
 use Getopt::Long;
 use PerlGlue::Model::UserCollection;
-use PerlGlie::Model::NextTalks;
+use PerlGlue::Model::NextTalks;
 
 my $apnsCert = "conf/push_cert.pem";
 my $apnsKey  = "conf/push_key.pem";
@@ -17,7 +17,7 @@ $ENV{DB_PASS}     = "";    # yea, I know, but this is just a bit of fun :)
 
 
 # work out which talks are in 5 minutes.
-my $nextTalks = PerlGlie::Model::NextTalks;
+my $nextTalks = new PerlGlue::Model::NextTalks;
 my $talks = $nextTalks->getTalks;
 
 my $talkIds = [];
@@ -35,7 +35,7 @@ while (my $user = $collection->next ) {
   foreach my $talk (@$talks) {
     my $msg = $talk->title . " is starting soon in " . $talk->location;
     $user->sendAlert( $msg );
-    #$user->flagTalkAsAlerted( $talkId );
+    $user->flagTalkAsAlerted( $talk->id );
   }
 }
 

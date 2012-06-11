@@ -4,6 +4,7 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
   use MooseX::ClassAttribute;
   use PerlGlue::Model::Talk;
   use PerlGlue::Model::MySchedule;
+  use PerlGlue::APNS;
   
   has id          => ( is => 'rw', isa => 'Int' );
   has deviceType  => ( is => 'rw', isa => 'Str', required => 1 );
@@ -74,7 +75,7 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
     return 1;
   }
 
-  method sendAlert( Str :$message! ) {
+  method sendAlert( Str $message! ) {
     $self->apns->devicetoken( $self->deviceToken );
     $self->apns->message( $message );
     $self->apns->write;

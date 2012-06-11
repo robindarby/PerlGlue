@@ -9,8 +9,8 @@ my ($token, $msg);
 
 GetOptions('token=s' => \$token, 'message=s' => \$msg);
 
-my $apnsCert = "/home/darby/work/PerlGlue/conf/push_cert.pem";
-my $apnsKey  = "/home/darby/work/PerlGlue/conf/push_key.pem";
+my $apnsCert = "conf/push_cert.pem";
+my $apnsKey  = "conf/push_key.pem";
 
 my $apns = new PerlGlue::APNS(
   cert        => $apnsCert,

@@ -17,6 +17,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   use MooseX::ClassAttribute;
   use Date::Language;
   use Time::Duration;
+  use Time::Local;
 
   has epoch => ( is => 'rw', isa => 'Int', lazy => 1, builder => '_buildEpochTime' );
   has zone  => ( is => 'rw', isa => 'Str', default => 'CDT' );
@@ -118,12 +119,12 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   }
 
   method fiveMinutesFromNow {
-    return $self->epoch + 300;
+    return $self->epoch + 3000;
   }
 
 
-  sub _buildEpochTime {
+  method _buildEpochTime {
     $ENV{TZ} = $self->zone;
-    return timelocal;
+    return time;
   }
 }

@@ -1,13 +1,14 @@
 use MooseX::Declare;
 
 class PerlGlue::Model::UserCollection extends PerlGlue::Model::Base {
+  use PerlGlue::Model::User;
 
   has elements => ( is => 'rw', isa => 'ArrayRef[HashRef]', default => sub { [] } );
   has talkIds  => ( is => 'ro', isa => 'ArrayRef', default => sub { [] } );
 
   after BUILD {
 
-    my $talkIn = join(',', @{$self->talkIds );
+    my $talkIn = join(',', @{$self->talkIds} );
    
     my $sql = qq{
       SELECT
@@ -19,7 +20,7 @@ class PerlGlue::Model::UserCollection extends PerlGlue::Model::Base {
     };
 
     my $members = [];
-    my $sth = $self->readDbh->runSqlCommand( $sql );
+    my $sth = $self->dbh->runSqlCommand( $sql );
     while ( my $row = $sth->fetchrow_hashref() ) {
       push @$members, $row;
     }
@@ -31,8 +32,8 @@ class PerlGlue::Model::UserCollection extends PerlGlue::Model::Base {
 
   method next {
     my $nextTab = shift @{$self->elements};
-    return undef unless($nextId);
-    my $member = new PerlGlue::User( deviceId => $nextTab->{device_id}, deviceType => $nextTab->{device_type}  );
+    return undef unless($nextTab);
+    my $member = new PerlGlue::Model::User( deviceId => $nextTab->{device_id}, deviceType => $nextTab->{device_type}  );
     return $member;
   }
 }

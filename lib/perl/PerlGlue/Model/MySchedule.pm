@@ -19,7 +19,7 @@ class PerlGlue::Model::MySchedule extends PerlGlue::Model::Schedule {
 
   method getTheseTalks( ArrayRef[Int] $talkIds! ) {
 
-    my $talksIn = join(',', $talkIds);
+    my $talksIn = join(',', @$talkIds);
 
     my $sql = qq{
       select SQL_CALC_FOUND_ROWS t.*, a.name as author_name
@@ -37,6 +37,6 @@ class PerlGlue::Model::MySchedule extends PerlGlue::Model::Schedule {
       push @$talks, new PerlGlue::Model::Talk( row => $row );
     }
     $sth->finish;
-    return (wantarray) ? ($talks, $totalRows) : $talk
+    return (wantarray) ? ($talks, $totalRows) : $talks;
   }
 }
