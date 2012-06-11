@@ -14,6 +14,8 @@ my $db = new PerlGlue::Database( connectionStr => 'DBI:mysql:perlglue;hostname=l
 $ENV{DB_CONN_STR} = "DBI:mysql:perlglue;hostname=localhost";
 $ENV{DB_USER}     = "root"; # yea, I know, but this is just a bit of fun :)
 $ENV{DB_PASS}     = "";    # yea, I know, but this is just a bit of fun :)
+$ENV{PUSH_CERT}   = $apnsCert;
+$ENV{PUSH_KEY}    = $apnsKey;
 
 
 # work out which talks are in 5 minutes.
