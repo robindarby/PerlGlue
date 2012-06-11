@@ -119,7 +119,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   }
 
   method fiveMinutesFromNow {
-    return $self->epoch + 3000;
+    return $self->epoch + 300;
   }
 
 
