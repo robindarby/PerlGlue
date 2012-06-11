@@ -21,7 +21,7 @@ class PerlGlue::Model::Base {
   has language => ( is => 'ro', isa => 'Str', default => 'en' );
   has region   => ( is => 'ro', isa => 'Str', default => 'US' );
 
-  has dbh      => ( is => 'rw', isa => 'PerlGlue::Database');
+  class_has dbh      => ( is => 'rw', isa => 'PerlGlue::Database');
 
   method BUILD {
     return if( $self->dbh );
@@ -32,4 +32,5 @@ class PerlGlue::Model::Base {
       password      => $ENV{DB_PASS}
     ));
   }
+
 }

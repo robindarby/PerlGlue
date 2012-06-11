@@ -56,5 +56,6 @@ drop table if exists user_schedule;
 create table user_schedule (
   user_id int(10) unsigned NOT NULL,
   talk_id int(10) unsigned NOT NULL,
+  alerted int(1) unsigned NOT NULL default 0,
   UNIQUE KEY(`user_id`,`talk_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

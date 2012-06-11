@@ -18,7 +18,7 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   use Date::Language;
   use Time::Duration;
 
-  has epoch => ( is => 'rw', isa => 'Int' );
+  has epoch => ( is => 'rw', isa => 'Int', lazy => 1, builder => '_buildEpochTime' );
   has zone  => ( is => 'rw', isa => 'Str', default => 'CDT' );
 
   # class static, map language (ISO) to Date::Language string.
@@ -115,5 +115,15 @@ class PerlGlue::Model::DateTime extends PerlGlue::Model::Base {
   #
   method epochDay {
     return int( $self->epoch / 86400 ); 
+  }
+
+  method fiveMinutesFromNow {
+    return $self->epoch + 300;
+  }
+
+
+  sub _buildEpochTime {
+    $ENV{TZ} = $self->zone;
+    return timelocal;
   }
 }

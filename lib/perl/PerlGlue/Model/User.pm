@@ -1,7 +1,7 @@
 use MooseX::Declare;
 
 class PerlGlue::Model::User extends PerlGlue::Model::Base {
-
+  use MooseX::ClassAttribute;
   use PerlGlue::Model::Talk;
   use PerlGlue::Model::MySchedule;
   
@@ -9,6 +9,8 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
   has deviceType  => ( is => 'rw', isa => 'Str', required => 1 );
   has deviceId    => ( is => 'ro', isa => 'Str', required => 1 );
   has deviceToken => ( is => 'rw', isa => 'Str' );
+
+  class_has apns  => ( is => 'rw', isa => 'PerlGlue::APNS', lazy => 1, builder => '_buildAPNS' );
 
   
   method BUILD {
@@ -72,7 +74,27 @@ class PerlGlue::Model::User extends PerlGlue::Model::Base {
     return 1;
   }
 
-  method sendAlert( Str $message ) {
+  method sendAlert( Str :$message! ) {
+    $self->apns->devicetoken( $self->deviceToken );
+    $self->apns->message( $message );
+    $self->apns->write;
+  }
+
+  method flagTalkAsAlerted( Int $talkId! ) {
+    my $sql = qq{update user_schedule set alerted = 1 where user_id = ? and talk_id = ?};
+    $self->dbh->query( $sql, [$self->id, $talkId] );
+  }
+
+  method _buildAPNS {
+
+    my $apnsCert = $ENV{PUSH_CERT};
+    my $apnsKey  = $ENV{PUSK_KEY};
+
+    my $apns = new PerlGlue::APNS(
+      cert        => $apnsCert,
+      key         => $apnsKey,
+      badge       => 0
+    );
   }
 
 }
