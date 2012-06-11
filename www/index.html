@@ -6,34 +6,43 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
   <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
   <script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+  <script src="cordova-1.7.0rc1.js"></script>  
+  <script type="text/javascript" src="PushNotification.js"></script>
 </head> 
 <body> 
 
-<div data-role="page">
+<div id="my_schedule_page" data-role="page">
 
-  <div data-role="header">
+  <div data-role="header" data-position="fixed" data-position="inline">
+    <select name="select-choice-0" id="my_schedule_date_sel" data-mini="true" class="ui-btn-left">
+      <option value="1339405200">Mon</option>
+      <option value="1339464893">Tue</option>
+      <option value="1339551293">Wed</option>
+      <option value="1339637693">Thu</option>
+      <option value="1339724093">Fri</option>
+    </select>
     <h1>My Schedule</h1>
   </div><!-- /header -->
 
-  <div data-role="content">  
-    <ul data-role="listview" data-theme="g">
+  <div id="content" data-role="content">  
+    <ul id="my_schedule_list" data-role="listview" data-theme="g">
     </ul>
   </div><!-- /content -->
+  
+  <div data-role="footer" data-position="fixed">
+    
+    <div data-role="navbar">
+      <ul>
+        <li><a href="index.html">My Schedule</a></li>
+        <li><a href="schedule.html">All Talks</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
+    </div><!-- /navbar -->
+  </div><!-- /footer -->
 
 </div><!-- /page -->
-
-<script>
-$(document).bind('pageinit') {
-
-  my $deviceId = device.uuid;
-  my $deviceType = device.platform;
-
-  var ajax = new XMLHttpRequest();
-  ajax.open("GET","http://localhost:8080/talks/myschedule/?device_id=" + deviceId + "&device_type=" + deviceType,true);
-  ajax.send();
-
-}
-</script>
+    
+<script type="text/javascript" src="perlglue.js"></script>
 
 </body>
 </html>

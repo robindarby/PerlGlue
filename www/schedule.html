@@ -1,25 +1,46 @@
 <!DOCTYPE html> 
 <html> 
-	<head> 
-	<title>My Page</title> 
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
-	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+  <head> 
+  <title>My Page</title> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+  <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+  <script src="cordova-1.7.0rc1.js"></script>  
 </head> 
 <body> 
 
-<div data-role="page">
+<div id="schedule_page" data-role="page">
 
-	<div data-role="header">
-		<h1>My Title</h1>
-	</div><!-- /header -->
+  <div data-role="header" data-position="fixed" data-position="inline">
+    <select name="select-choice-0" id="schedule_date_sel" data-mini="true" class="ui-btn-left">
+      <option value="1339405200">Mon</option>
+      <option value="1339464893">Tue</option>
+      <option value="1339551293">Wed</option>
+      <option value="1339637693">Thu</option>
+      <option value="1339724093">Fri</option>
+    </select>
+    <h1>All Talks</h1>
+  </div><!-- /header -->
 
-	<div data-role="content">	
-		<p>Hello world</p>		
-	</div><!-- /content -->
+  <div id="content" data-role="content">  
+    <ul id="schedule_list" data-role="listview" data-theme="g">
+    </ul>
+  </div><!-- /content -->
+  
+  <div data-role="footer" data-position="fixed">
+
+    <div data-role="navbar" >
+      <ul>
+        <li><a href="index.html">My Schedule</a></li>
+        <li><a href="schedule.html">All Talks</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
+    </div><!-- /navbar -->
+  </div><!-- /footer -->
 
 </div><!-- /page -->
+
 
 </body>
 </html>

@@ -9,15 +9,42 @@
 </head> 
 <body> 
 
-<div data-role="page">
+<div id="talk_page" data-role="page">
 
-	<div data-role="header">
-		<h1>My Title</h1>
+	<div data-role="header" data-position="fixed">
+		<h1 id="talk_title"></h1>
 	</div><!-- /header -->
 
-	<div data-role="content">	
-		<p>Hello world</p>		
+	<div data-role="content">
+    <p><b id="talk_title_bold"></b></p>
+    <p id="talk_date"></p>
+    <p id="talk_location"></p>
+		<p id="talk_overview"></p>
+    <p>by <b id="talk_author"></b></p>
+    <p>average rating: <b id="talk_rating"></b></p>
+    <h2>Comments</h2>
+    <ul id="comment_list" data-role="listview" data-theme="g">
+    </ul>
+    <p>
+    <a id="load_more_btn" data-role="button" data-inline="true" data-mini="true">more</a>
+    </p>
+    <div data-role="controlgroup"  data-mini="true">
+      <a id="add_talk_btn" data-role="button" data-icon="plus">Add</a>
+      <a id="remove_talk_btn" data-role="button" data-icon="delete">Delete</a>
+      <a data-rel="dialog" id="comment_btn" data-role="button" data-icon="info">Comment</a>
+      <a data-rel="dialog" id="rate_btn" data-role="button" data-icon="alert">Rate</a>
+    </div>
 	</div><!-- /content -->
+  
+  <div data-role="footer" data-position="fixed">		
+    <div data-role="navbar">
+      <ul>
+        <li><a href="index.html">My Schedule</a></li>
+        <li><a href="schedule.html">All Talks</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
+    </div><!-- /navbar -->
+  </div><!-- /footer -->
 
 </div><!-- /page -->
 
