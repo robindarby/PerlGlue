@@ -1,0 +1,72 @@
+
+<VirtualHost *:80>
+  ServerName  perlglue.m0nkey.us
+
+  ServerRoot /home/webuser/PerlGlue
+
+  SetEnv DB_CONN_STR DBI:mysql:perlglue;hostname=localhost
+  SetEnv DB_USER root
+  SetEnv DB_PASS
+
+  PerlRequire /home/webuser/PerlGlue/lib/preload.pl
+
+  DocumentRoot /home/webuser/PerlGlue/www/
+  DirectoryIndex index.html
+
+  <Location /talks/schedule/>
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Schedule
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/[0-9]+/info/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </LocationMatch>
+
+  <LocationMatch "/talks/[0-9]+/add/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </LocationMatch>
+
+  <LocationMatch "/talks/[0-9]+/remove/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </LocationMatch>
+
+  <Location "/talks/myschedule/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Schedule
+    allow from all
+  </Location>
+
+  <LocationMatch "/talks/[0-9]+/comment/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </LocationMatch>
+
+  <LocationMatch "/talks/[0-9]+/rate/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Talk
+    allow from all
+  </LocationMatch>
+
+  <Location "/alerts/enable/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Settings
+    allow from all
+  </Location>
+
+  <Location "/alerts/disable/">
+    SetHandler perl-script
+    PerlHandler PerlGlue::Handler::Settings
+    allow from all
+  </Location>
+
+</VirtualHost>
+
+
